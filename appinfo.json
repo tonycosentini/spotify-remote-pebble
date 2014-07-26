@@ -1,0 +1,16 @@
+{
+  "uuid": "ee12b239-f676-417b-8c07-6bf143b98455",
+  "shortName": "Spotify Remote",
+  "longName": "Spotify Remote",
+  "companyName": "Tony Cosentini",
+  "versionCode": 1,
+  "versionLabel": "1.0.0",
+  "watchapp": {
+    "watchface": false
+  },
+  "appKeys": {
+  },
+  "resources": {
+    "media": []
+  }
+}
