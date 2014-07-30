@@ -1,20 +1,22 @@
 #include "loading_window.h"
 #include <stdlib.h>
 
-static TextLayer *text_layer;
+static GBitmap *icon_bitmap;
+static BitmapLayer *icon_bitmap_layer;
 
 static void window_load(Window *window) {
   Layer *window_layer = window_get_root_layer(window);
   GRect bounds = layer_get_frame(window_layer);
 
-  text_layer = text_layer_create(bounds);
-  text_layer_set_text(text_layer, "Loading...");
-
-  layer_add_child(window_layer, text_layer_get_layer(text_layer));
+  icon_bitmap = gbitmap_create_with_resource(RESOURCE_ID_LARGE_ICON);
+  icon_bitmap_layer = bitmap_layer_create(layer_get_frame(window_layer));
+  bitmap_layer_set_bitmap(icon_bitmap_layer, icon_bitmap);
+  layer_add_child(window_layer, bitmap_layer_get_layer(icon_bitmap_layer));
 }
 
 static void window_unload(Window *window) {
-  text_layer_destroy(text_layer);
+  bitmap_layer_destroy(icon_bitmap_layer);
+  gbitmap_destroy(icon_bitmap);
 }
 
 Window *loading_window_create() {

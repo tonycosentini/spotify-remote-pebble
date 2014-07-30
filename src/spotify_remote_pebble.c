@@ -2,9 +2,11 @@
 #include "model.h"
 #include "loading_window.h"
 #include "playlists_menu_window.h"
+#include "error_window.h"
 
 static Window *loading_window;
 static Window *playlists_menu_window;
+static Window *error_window;
 static SpotifyPlaylist *playlists_head;
 
 static const int KEY_MESSAGE = 1;
@@ -12,10 +14,24 @@ static const int KEY_PLAYLIST_NAME = 2;
 static const int KEY_PLAYLIST_ID = 3;
 static const int KEY_PLAY_PLAYLIST = 4;
 
-static const int  VALUE_CONNECT = 1;
-static const int  VALUE_MESSAGE_RESET = 2;
-static const int  VALUE_DID_RESET = 3;
-static const int  VALUE_DID_RECEIVE_ALL_PLAYLISTS = 4;
+static const int VALUE_CONNECT = 1;
+static const int VALUE_MESSAGE_RESET = 2;
+static const int VALUE_DID_RESET = 3;
+static const int VALUE_DID_RECEIVE_ALL_PLAYLISTS = 4;
+static const int VALUE_MUST_LAUNCH_SPOTIFY = 5;
+static const int VALUE_MUST_AUTHORIZE_SPOTIFY = 6; 
+
+// Utils
+static void hide_loading_window() {
+  window_stack_remove(loading_window, false);
+  window_destroy(loading_window);
+  loading_window = NULL;
+}
+
+static void show_error_window(char *error_message) {
+    error_window = error_window_create(error_message);
+    window_stack_push(error_window, true);
+}
 
 // App Communication
 
@@ -44,8 +60,12 @@ static void out_sent_handler(DictionaryIterator *sent, void *context) {
 }
 
 static void out_failed_handler(DictionaryIterator *failed, AppMessageResult reason, void *context) {
-  // outgoing message failed
   APP_LOG(APP_LOG_LEVEL_DEBUG, translate_error(reason));
+
+  if (reason == APP_MSG_SEND_TIMEOUT) {
+    show_error_window("Unable to connect to Playlists Remote Android app. Please make sure the app is running on your device and your Pebble is connected.");
+    hide_loading_window();
+  }
 }
 
 static void in_received_handler(DictionaryIterator *received, void *context) {
@@ -57,7 +77,13 @@ static void in_received_handler(DictionaryIterator *received, void *context) {
     if (value == VALUE_DID_RECEIVE_ALL_PLAYLISTS) {
         playlists_menu_window = playlists_window_create(playlists_head);
       window_stack_push(playlists_menu_window, true);
-      window_stack_remove(loading_window, false);
+      hide_loading_window();
+    } else if (value == VALUE_MUST_AUTHORIZE_SPOTIFY) {
+      show_error_window("Please authorize your Spotify Account within the Playlists Remote app on your device.");
+      hide_loading_window();
+    } else if (value == VALUE_MUST_LAUNCH_SPOTIFY) {
+      show_error_window("Spotify must be running on your device in order to use Playlists Remote.");
+      hide_loading_window();
     }
 
     return;
@@ -108,7 +134,13 @@ int main(void) {
 
   app_event_loop();
 
-  window_destroy(loading_window);
+  if (error_window != NULL) {
+    window_destroy(error_window);
+  }
+
+  if (loading_window != NULL) {
+    window_destroy(loading_window);
+  }
 
   if (playlists_menu_window != NULL) {
     window_destroy(playlists_menu_window);

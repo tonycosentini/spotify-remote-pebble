@@ -15,9 +15,13 @@
       {
         "type": "png",
         "name": "MENU_ICON",
-        "type": "png",
         "file": "images/menuicon.png",
         "menuIcon": true
+      },
+      {
+        "type": "png",
+        "name": "LARGE_ICON",
+        "file": "images/largeicon.png"
       }
     ]
   }
