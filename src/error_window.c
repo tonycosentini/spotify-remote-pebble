@@ -15,6 +15,7 @@ static void window_load(Window *window) {
 
 static void window_unload(Window *window) {
   text_layer_destroy(error_text_layer);
+  window_destroy(window);
 }
 
 Window *error_window_create(char *error_message) {

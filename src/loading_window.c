@@ -17,6 +17,7 @@ static void window_load(Window *window) {
 static void window_unload(Window *window) {
   bitmap_layer_destroy(icon_bitmap_layer);
   gbitmap_destroy(icon_bitmap);
+  window_destroy(window);
 }
 
 Window *loading_window_create() {
