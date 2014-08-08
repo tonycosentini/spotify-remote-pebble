@@ -78,6 +78,7 @@ static void window_load(Window *window) {
 
 static void window_unload(Window *window) {
   menu_layer_destroy(playlists_menu_layer);
+  window_destroy(window);
 }
 
 Window *playlists_window_create(SpotifyPlaylist *playlists_head) {
