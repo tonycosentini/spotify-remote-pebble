@@ -1,4 +1,7 @@
 # Spotify Playlists Remote Watchapp
+
+## DEPRECATED: I'm no loner updating this project as I don't use Spotify or a Pebble anymore.
+
 A simple Pebble remote for switching Spotify playlists. **Requires Android-only companion app.**
 
 [![Download Watchapp](http://pblweb.com/badge/53d88b3c909b059949000146/orange/medium/)](https://apps.getpebble.com/applications/53d88b3c909b059949000146)
